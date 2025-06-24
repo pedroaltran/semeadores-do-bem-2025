@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Semeadores do Bem</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+        <!-- Custom CSS -->
+    <link rel="stylesheet" href="../static/login.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='images/icone.png') }}" type="image/x-icon">
+    
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f97316', // orange-500
+                        secondary: '#facc15', // yellow-400
+                        accent: '#3b82f6', // blue-500
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'open-sans': ['Open Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-orange-50 to-yellow-50 font-open-sans min-h-screen">
+    <!-- Navbar Simplificada -->
+    <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <img src="{{ url_for('static', filename='images/logo-clean.png') }}" alt="Logo Semeadores do Bem" class="h-24 w-24">
+                        <span class="ml-3 text-xl font-montserrat font-bold text-gray-800 hidden sm:block">
+                            Semeadores do Bem
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Link para voltar -->
+                <div>
+                    <a href="/" class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span class="hidden sm:inline">Voltar ao site</span>
+                        <span class="sm:hidden">Voltar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Content -->
+    <div class="flex items-center justify-center min-h-screen pt-20 px-4">
+        <div class="w-full max-w-md">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-5">
+                <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23f97316" fill-opacity="1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+            </div>
+
+            <!-- Login Card -->
+            <div class="bg-white rounded-2xl shadow-2xl p-8 relative">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary to-orange-600 rounded-full mb-4">
+                        <i class="fas fa-user-shield text-3xl text-white"></i>
+                    </div>
+                    <h2 class="text-3xl font-montserrat font-bold text-gray-800 mb-2">
+                        Acesso ao Sistema
+                    </h2>
+                    <p class="text-gray-600">
+                        Entre com suas credenciais para acessar o painel administrativo
+                    </p>
+                </div>
+
+                <!-- Form -->
+                <form id="loginForm" action="/auth/login" method="POST" class="space-y-6">
+                    <!-- Username Field -->
+                    <div>
+                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Email ou Usuário
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input 
+                                id="username" 
+                                name="username" 
+                                type="text" 
+                                autocomplete="username" 
+                                required
+                                class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary transition-colors"
+                                placeholder="Digite seu email ou usuário"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Senha
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input 
+                                id="password" 
+                                name="password" 
+                                type="password" 
+                                autocomplete="current-password" 
+                                required
+                                class="w-full pl-10 pr-12 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary transition-colors"
+                                placeholder="Digite sua senha"
+                            >
+                            <button 
+                                type="button" 
+                                id="togglePassword" 
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                            >
+                                <i class="fas fa-eye" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input 
+                                id="remember-me" 
+                                name="remember-me" 
+                                type="checkbox"
+                                class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                            >
+                            <label for="remember-me" class="ml-2 text-sm text-gray-700">
+                                Lembrar-me
+                            </label>
+                        </div>
+
+                        <a href="#" id="forgot-password" class="text-sm font-medium text-accent hover:text-blue-600 transition-colors">
+                            Esqueceu sua senha?
+                        </a>
+                    </div>
+
+                    <!-- Error Message -->
+                    {% if error %}
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded" id="errorAlert">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-red-800">{{ error }}</p>
+                            </div>
+                            <button type="button" onclick="closeAlert('errorAlert')" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Success Message -->
+                    {% if success %}
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded" id="successAlert">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-green-800">{{ success }}</p>
+                            </div>
+                            <button type="button" onclick="closeAlert('successAlert')" class="text-green-500 hover:text-green-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="submitButton"
+                        class="w-full bg-gradient-to-r from-primary to-orange-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-orange-600 hover:to-orange-700 transition-all transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-orange-300"
+                    >
+                        <span id="buttonText" class="flex items-center justify-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Entrar
+                        </span>
+                        <span id="loadingSpinner" class="hidden flex items-center justify-center">
+                            <svg class="animate-spin h-5 w-5 text-white mr-2" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Entrando...
+                        </span>
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-8">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-white text-gray-500">Precisa de ajuda?</span>
+                    </div>
+                </div>
+
+                <!-- Help Links -->
+                <div class="text-center space-y-2">
+                    <p class="text-sm text-gray-600">
+                        Entre em contato com o administrador
+                    </p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="tel:+551636216369" class="text-accent hover:text-blue-600 transition-colors">
+                            <i class="fas fa-phone mr-1"></i>
+                            (16) 3621-6369
+                        </a>
+                        <a href="mailto:contato@semeadoresdebem.org.br" class="text-accent hover:text-blue-600 transition-colors">
+                            <i class="fas fa-envelope mr-1"></i>
+                            Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Copyright -->
+            <div class="text-center mt-8 text-gray-600 text-sm">
+                <p>&copy; 2025 Semeadores do Bem - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Password toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            if (type === 'password') {
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            } else {
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            }
+        });
+
+        // Form submission handling
+        const loginForm = document.getElementById('loginForm');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        loginForm.addEventListener('submit', (e) => {
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-75', 'cursor-not-allowed');
+            buttonText.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+        });
+
+        // Close alert function
+        function closeAlert(alertId) {
+            const alert = document.getElementById(alertId);
+            if (alert) {
+                alert.style.transition = 'all 0.3s ease-out';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(100%)';
+                setTimeout(() => alert.remove(), 300);
+            }
+        }
+
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            const alerts = document.querySelectorAll('[id$="Alert"]');
+            if (alerts.length > 0) {
+                setTimeout(() => {
+                    alerts.forEach(alert => {
+                        if (alert) {
+                            closeAlert(alert.id);
+                        }
+                    });
+                }, 5000);
+            }
+        });
+
+        // Forgot password handler
+        document.getElementById('forgot-password').addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Create a custom modal alert
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-sm mx-4 transform transition-all">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4">
+                            <i class="fas fa-info-circle text-3xl text-secondary"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Recuperação de Senha</h3>
+                        <p class="text-gray-600 mb-6">
+                            Por favor, entre em contato com o administrador para redefinir sua senha.
+                        </p>
+                        <button onclick="this.closest('.fixed').remove()" 
+                                class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                            Entendido
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        });
+
+        // Add input focus effects
+        const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('ring-2', 'ring-orange-200', 'rounded-lg');
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('ring-2', 'ring-orange-200');
+            });
+        });
+    </script>
+</body>
+</html>)

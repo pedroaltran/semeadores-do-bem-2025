@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Semeadores do Bem</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/app/static/index.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/icone.png') }}" type="image/x-icon">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f97316', // orange-500
+                        secondary: '#facc15', // yellow-400
+                        accent: '#3b82f6', // blue-500
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'open-sans': ['Open Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-open-sans bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <img src="{{ url_for('static', filename='images/logo-clean.png') }}" alt="Logo Semeadores do Bem" class="h-24 w-24">
+                        <span class="ml-3 text-xl font-montserrat font-bold text-gray-800 hidden sm:block">
+                            Semeadores do Bem
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Link para voltar -->
+                <div>
+                    <a href="/" class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span class="hidden sm:inline">Voltar ao site</span>
+                        <span class="sm:hidden">Voltar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 bg-gradient-to-br from-orange-50 to-yellow-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h1 class="text-4xl lg:text-5xl font-montserrat font-bold text-gray-800 mb-4">
+                    Nosso Blog
+                </h1>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Acompanhe as novidades, histórias inspiradoras e ações da nossa organização
+                </p>
+                
+                {% if search_query %}
+                <div class="mt-6 inline-flex items-center bg-white px-4 py-2 rounded-full shadow">
+                    <span class="text-gray-600">Resultados para:</span>
+                    <span class="ml-2 font-semibold text-accent">{{ search_query }}</span>
+                    <a href="/blog" class="ml-3 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+                {% endif %}
+                
+                {% if featured_only %}
+                <div class="mt-6">
+                    <span class="inline-block bg-secondary text-gray-800 px-4 py-2 rounded-full font-semibold">
+                        <i class="fas fa-star mr-2"></i>Posts em Destaque
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="py-16">
+        <div class="container mx-auto px-4">
+            <!-- Action Buttons for Authenticated Users -->
+            {% if is_authenticated %}
+            <div class="flex justify-end mb-8">
+                <a href="/blog/new" 
+                   class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors font-semibold flex items-center">
+                    <i class="fas fa-plus mr-2"></i>
+                    Nova Publicação
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Blog Posts Grid -->
+            {% if posts %}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for post in posts %}
+                <article class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <!-- Post Image -->
+                    {% if post.image_url %}
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ post.image_url }}" 
+                             alt="{{ post.title }}" 
+                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    {% else %}
+                    <div class="h-48 bg-gradient-to-br from-orange-100 to-yellow-100 flex items-center justify-center">
+                        <i class="fas fa-newspaper text-6xl text-orange-300"></i>
+                    </div>
+                    {% endif %}
+
+                    <!-- Post Content -->
+                    <div class="p-6 flex flex-col h-full">
+                        <!-- Meta Information -->
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <span class="flex items-center mr-4">
+                                <i class="fas fa-calendar text-primary mr-2"></i>
+                                {{ post.created_at }}
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-eye text-secondary mr-2"></i>
+                                {{ post.views or 0 }} visualizações
+                            </span>
+                        </div>
+
+                        <!-- Title -->
+                        <h2 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
+                            {{ post.title }}
+                        </h2>
+
+                        <!-- Excerpt -->
+                        <p class="text-gray-600 mb-4 flex-grow line-clamp-3">
+                            {% if post.excerpt %}
+                                {{ post.excerpt }}
+                            {% else %}
+                                {% set content_text = post.content|striptags %}
+                                {{ content_text[:150] + '...' if content_text|length > 150 else content_text }}
+                            {% endif %}
+                        </p>
+
+                        <!-- Tags -->
+                        {% if post.tags %}
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            {% for tag in post.tags.split(',') %}
+                            <span class="text-xs bg-yellow-100 text-gray-700 px-2 py-1 rounded-full">
+                                {{ tag.strip() }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Read More Link -->
+                        <a href="/blog/view/{{ post.id }}" 
+                           class="inline-flex items-center text-accent font-semibold hover:text-blue-600 transition-colors group">
+                            Continuar lendo
+                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+
+            <!-- Paginação Numérica -->
+            {% if total_pages > 1 %}
+            <nav class="flex justify-center items-center flex-wrap gap-2 mt-12">
+                <!-- Botão Anterior -->
+                {% if has_prev %}
+                <a href="/blog?page={{ page - 1 }}{% if search_query %}&q={{ search_query }}{% endif %}" 
+                class="flex items-center px-4 py-2 bg-white border-2 border-gray-200 rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-colors">
+                    <i class="fas fa-chevron-left mr-2"></i> Anterior
+                </a>
+                {% endif %}
+
+                <!-- Números das Páginas -->
+                {% set start_page = [1, page - 2]|max %}
+                {% set end_page = [total_pages, page + 2]|min %}
+                {% for p in range(start_page, end_page + 1) %}
+                    {% if p == page %}
+                    <span class="px-4 py-2 bg-primary text-white border border-primary rounded-lg font-semibold">
+                        {{ p }}
+                    </span>
+                    {% else %}
+                    <a href="/blog?page={{ p }}{% if search_query %}&q={{ search_query }}{% endif %}"
+                    class="px-4 py-2 bg-white border-2 border-gray-200 rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-colors">
+                        {{ p }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Botão Próximo -->
+                {% if has_next %}
+                <a href="/blog?page={{ page + 1 }}{% if search_query %}&q={{ search_query }}{% endif %}" 
+                class="flex items-center px-4 py-2 bg-white border-2 border-gray-200 rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-colors">
+                    Próximo <i class="fas fa-chevron-right ml-2"></i>
+                </a>
+                {% endif %}
+            </nav>
+            {% endif %}
+
+
+            {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-16">
+                <div class="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6">
+                    <i class="fas fa-newspaper text-4xl text-gray-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Nenhuma publicação ainda</h3>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto">
+                    Ainda não temos publicações disponíveis. Volte em breve para novidades!
+                </p>
+                
+                {% if is_authenticated %}
+                <a href="/blog/new" 
+                   class="inline-flex items-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors font-semibold">
+                    <i class="fas fa-plus mr-2"></i>
+                    Criar Primeira Publicação
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">Semeadores do Bem</h3>
+                    <p class="text-gray-300">
+                        Transformando vidas através da solidariedade e do amor ao próximo.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Links Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/#sobre" class="text-gray-300 hover:text-primary transition-colors">Sobre Nós</a></li>
+                        <li><a href="/transparencia" class="text-gray-300 hover:text-primary transition-colors">Transparência</a></li>
+                        <li><a href="/blog" class="text-gray-300 hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="/#colaborador" class="text-gray-300 hover:text-primary transition-colors">Como Ajudar</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contato</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="tel:+551636216369" class="text-gray-300 hover:text-primary transition-colors">
+                                <i class="fas fa-phone mr-2"></i>(16) 3621-6369
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:contato@semeadoresdebem.org.br" class="text-gray-300 hover:text-primary transition-colors">
+                                <i class="fas fa-envelope mr-2"></i>contato@semeadoresdebem.org.br
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="border-gray-700 mb-8">
+            
+            <div class="text-center text-gray-400">
+                <p>&copy; 2025 Semeadores do Bem - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="static/js/blog.js"></script>
+</body>
+</html>

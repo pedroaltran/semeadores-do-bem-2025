@@ -1,0 +1,125 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="title">Estatísticas</h1>
+    
+    <!-- Estatísticas Mensais -->
+    <div class="box">
+        <h2 class="subtitle">Estatísticas do Mês Atual</h2>
+        <div class="columns is-multiline">
+            <div class="column is-3">
+                <div class="notification is-primary">
+                    <p class="heading">Posts Criados</p>
+                    <p class="title">{{ stats.monthly.posts_created }}</p>
+                </div>
+            </div>
+            <div class="column is-3">
+                <div class="notification is-info">
+                    <p class="heading">Documentos Enviados</p>
+                    <p class="title">{{ stats.monthly.documents_uploaded }}</p>
+                </div>
+            </div>
+            <div class="column is-3">
+                <div class="notification is-warning">
+                    <p class="heading">Mensagens Recebidas</p>
+                    <p class="title">{{ stats.monthly.messages_received }}</p>
+                </div>
+            </div>
+            <div class="column is-3">
+                <div class="notification is-success">
+                    <p class="heading">Visualizações de Posts</p>
+                    <p class="title">{{ stats.monthly.total_post_views }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Estatísticas Totais -->
+    <div class="box">
+        <h2 class="subtitle">Estatísticas Totais</h2>
+        <div class="columns is-multiline">
+            <div class="column is-4">
+                <div class="notification is-light">
+                    <p class="heading">Total de Posts</p>
+                    <p class="title">{{ stats.total.posts }}</p>
+                </div>
+            </div>
+            <div class="column is-4">
+                <div class="notification is-light">
+                    <p class="heading">Total de Documentos</p>
+                    <p class="title">{{ stats.total.documents }}</p>
+                </div>
+            </div>
+            <div class="column is-4">
+                <div class="notification is-light">
+                    <p class="heading">Mensagens Não Lidas</p>
+                    <p class="title">{{ stats.total.messages }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Posts Mais Vistos -->
+    <div class="box">
+        <h2 class="subtitle">Posts Mais Vistos</h2>
+        <div class="table-container">
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Visualizações</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in stats.top_posts %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('view_post', slug=post.slug) }}">
+                                {{ post.title }}
+                            </a>
+                        </td>
+                        <td>{{ post.author_name }}</td>
+                        <td>{{ post.total_views }}</td>
+                        <td>{{ post.created_at|datetime }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Documentos Mais Baixados -->
+    <div class="box">
+        <h2 class="subtitle">Documentos Mais Baixados</h2>
+        <div class="table-container">
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Downloads</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in stats.top_docs %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('download_documento', doc_id=doc.id) }}">
+                                {{ doc.titulo }}
+                            </a>
+                        </td>
+                        <td>{{ doc.author_name }}</td>
+                        <td>{{ doc.total_downloads }}</td>
+                        <td>{{ doc.created_at|datetime }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

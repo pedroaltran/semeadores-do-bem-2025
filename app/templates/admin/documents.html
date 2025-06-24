@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentos de Transparência - Semeadores do Bem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/icone.png') }}" type="image/x-icon">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        'primary-dark': '#2563EB',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        danger: '#EF4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('admin.dashboard') }}" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="text-xl font-semibold text-gray-800">Documentos de Transparência</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Filter by Category -->
+                    <div class="relative">
+                        <select onchange="filterByCategory(this.value)" 
+                                class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Todas as categorias</option>
+                            <option value="geral">Geral</option>
+                            <option value="financeiro">Relatórios Financeiros</option>
+                            <option value="relatorios">Relatórios de Atividades</option>
+                            <option value="atas">Atas de Reunião</option>
+                            <option value="contratos">Contratos e Convênios</option>
+                            <option value="prestacao_contas">Prestação de Contas</option>
+                            <option value="editais">Editais</option>
+                            <option value="projetos">Projetos Sociais</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('transparency.upload') }}" 
+                       class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                        <i class="fas fa-upload mr-2"></i>Novo Documento
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg flex items-center justify-between fade-in
+                        {% if category == 'error' %}bg-red-50 text-red-700 border border-red-200
+                        {% elif category == 'success' %}bg-green-50 text-green-700 border border-green-200
+                        {% elif category == 'warning' %}bg-yellow-50 text-yellow-700 border border-yellow-200
+                        {% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas fa-{% if category == 'error' %}exclamation-circle{% elif category == 'success' %}check-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} mr-3"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="ml-4 hover:opacity-70">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Page Header -->
+        <div class="mb-8 fade-in">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Gerenciar Documentos</h2>
+            <p class="text-gray-600">Administre todos os seus documentos</p>
+        </div>
+
+        <!-- Documents Grid -->
+        {% if documents %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
+                {% for doc in documents %}
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
+                        <div class="p-6">
+                            <!-- Document Header -->
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <!-- File Type Icon -->
+                                    {% if doc.original_filename %}
+                                        {% set file_ext = doc.original_filename.split('.')[-1].lower() %}
+                                    {% else %}
+                                        {% set file_ext = 'file' %}
+                                    {% endif %}
+                                    
+                                    <div class="p-3 rounded-lg 
+                                        {% if file_ext == 'pdf' %}bg-red-100 text-red-600
+                                        {% elif file_ext in ['doc', 'docx'] %}bg-blue-100 text-blue-600
+                                        {% elif file_ext in ['xls', 'xlsx'] %}bg-green-100 text-green-600
+                                        {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                        <i class="fas fa-{% if file_ext == 'pdf' %}file-pdf{% elif file_ext in ['doc', 'docx'] %}file-word{% elif file_ext in ['xls', 'xlsx'] %}file-excel{% else %}file{% endif %} text-xl"></i>
+                                    </div>
+                                    
+                                    <div class="flex-1">
+                                        <!-- Category Badge -->
+                                        {% if doc.categoria %}
+                                            <span class="inline-block px-2 py-1 text-xs font-medium rounded-full mb-2
+                                                {% if doc.categoria == 'financeiro' %}bg-green-100 text-green-800
+                                                {% elif doc.categoria == 'relatorios' %}bg-blue-100 text-blue-800
+                                                {% elif doc.categoria == 'atas' %}bg-purple-100 text-purple-800
+                                                {% elif doc.categoria == 'contratos' %}bg-orange-100 text-orange-800
+                                                {% elif doc.categoria == 'prestacao_contas' %}bg-yellow-100 text-yellow-800
+                                                {% elif doc.categoria == 'editais' %}bg-indigo-100 text-indigo-800
+                                                {% elif doc.categoria == 'projetos' %}bg-pink-100 text-pink-800
+                                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                                {% if doc.categoria == 'financeiro' %}Financeiro
+                                                {% elif doc.categoria == 'relatorios' %}Relatórios
+                                                {% elif doc.categoria == 'atas' %}Atas
+                                                {% elif doc.categoria == 'contratos' %}Contratos
+                                                {% elif doc.categoria == 'prestacao_contas' %}Prestação de Contas
+                                                {% elif doc.categoria == 'editais' %}Editais
+                                                {% elif doc.categoria == 'projetos' %}Projetos
+                                                {% elif doc.categoria == 'geral' %}Geral
+                                                {% else %}{{ doc.categoria|title }}{% endif %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Public/Private indicator -->
+                                {% if doc.is_public is defined and not doc.is_public %}
+                                    <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                                        <i class="fas fa-lock mr-1"></i>Privado
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Document Info -->
+                            <h3 class="font-semibold text-gray-900 mb-2 text-lg leading-tight">{{ doc.titulo or 'Título não definido' }}</h3>
+                            
+                            {% if doc.descricao %}
+                                <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ doc.descricao }}</p>
+                            {% endif %}
+
+                            <!-- Metadata -->
+                            <div class="space-y-2 text-xs text-gray-500 mb-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-calendar-alt mr-2 w-3"></i>
+                                        {% if doc.created_at %}
+                                            {% set date_parts = doc.created_at.split('T')[0].split('-') %}
+                                            {{ date_parts[2] }}/{{ date_parts[1] }}/{{ date_parts[0] }}
+                                        {% else %}
+                                            Data não informada
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if doc.file_size %}
+                                        <div class="flex items-center">
+                                            <i class="fas fa-weight mr-1"></i>
+                                            {% if doc.file_size > 1048576 %}
+                                                {{ "%.1f"|format(doc.file_size / 1048576) }} MB
+                                            {% elif doc.file_size > 1024 %}
+                                                {{ "%.0f"|format(doc.file_size / 1024) }} KB
+                                            {% else %}
+                                                {{ doc.file_size }} bytes
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    {% if doc.downloads and doc.downloads > 0 %}
+                                        <div class="flex items-center">
+                                            <i class="fas fa-download mr-2 w-3"></i>
+                                            {{ doc.downloads }} download{{ 's' if doc.downloads != 1 else '' }}
+                                        </div>
+                                    {% else %}
+                                        <div class="flex items-center text-gray-400">
+                                            <i class="fas fa-download mr-2 w-3"></i>
+                                            Nenhum download
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if doc.mime_type %}
+                                        <div class="text-xs text-gray-400">
+                                            {{ doc.mime_type.split('/')[-1].upper() }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Author info -->
+                                {% if doc.author_email %}
+                                    <div class="flex items-center">
+                                        <i class="fas fa-user mr-2 w-3"></i>
+                                        {{ doc.author_email.split('@')[0] }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                                <a href="{{ url_for('transparency.download', doc_id=doc.id) }}" 
+                                   class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center transition-colors group">
+                                    <i class="fas fa-download mr-2 group-hover:scale-110 transition-transform"></i>
+                                    Download
+                                </a>
+                                
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="copyDocumentLink('{{ doc.id }}')" 
+                                            class="text-gray-600 hover:text-gray-800 p-1 rounded transition-colors"
+                                            title="Copiar link">
+                                        <i class="fas fa-link text-sm"></i>
+                                    </button>
+                                    
+                                    <form action="{{ url_for('transparency.delete', doc_id=doc.id) }}" 
+                                          method="POST" class="inline">
+                                        <button type="submit" 
+                                                class="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
+                                                onclick="return confirm('Tem certeza que deseja excluir este documento?\\n\\nEsta ação não pode ser desfeita.')"
+                                                title="Excluir documento">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center fade-in">
+                <div class="max-w-md mx-auto">
+                    <i class="fas fa-file-alt text-6xl text-gray-300 mb-6"></i>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Nenhum documento encontrado</h3>
+                    <p class="text-gray-500 mb-6">Faça upload do seu primeiro documento de transparência</p>
+                    
+                    <a href="{{ url_for('transparency.upload') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="fas fa-upload mr-2"></i>Upload de Documento
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Pagination -->
+        {% if documents and (has_prev or has_next) %}
+            <div class="mt-12 flex items-center justify-center space-x-2 fade-in">
+                {% if has_prev %}
+                    <a href="?page={{ page - 1 }}" 
+                       class="flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-chevron-left mr-2"></i>Anterior
+                    </a>
+                {% endif %}
+                
+                <span class="px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg">
+                    Página {{ page }}
+                </span>
+                
+                {% if has_next %}
+                    <a href="?page={{ page + 1 }}" 
+                       class="flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Próxima<i class="fas fa-chevron-right ml-2"></i>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <!-- Statistics Footer -->
+        {% if documents %}
+            <div class="mt-8 text-center text-sm text-gray-500 fade-in">
+                Gerenciamento de documentos de transparência
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Toast for copy link -->
+    <div id="copyToast" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300">
+        <i class="fas fa-check mr-2"></i>Link copiado!
+    </div>
+
+    <script>
+        function filterByCategory(category) {
+            if (category) {
+                window.location.href = '{{ url_for("transparency.by_category", categoria="") }}' + category;
+            } else {
+                window.location.href = '{{ url_for("transparency.index") }}';
+            }
+        }
+
+        function copyDocumentLink(docId) {
+            const link = window.location.origin + '{{ url_for("transparency.download", doc_id="") }}' + docId;
+            navigator.clipboard.writeText(link).then(() => {
+                showToast();
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = link;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('copyToast');
+            toast.classList.remove('translate-y-full', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-full', 'opacity-0');
+            }, 2000);
+        }
+
+        // Add fade-in animation to elements as they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.grid > div').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

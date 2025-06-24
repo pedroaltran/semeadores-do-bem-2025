@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Semeadores do Bem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/app/static/index.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/icone.png') }}" type="image/x-icon">
+
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        'primary-dark': '#2563EB',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        danger: '#EF4444',
+                        warning: '#F59E0B',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hover-scale {
+            transition: all 0.2s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-['Inter']">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-xl font-semibold text-gray-800">Semeadores do Bem</h1>
+                    <span class="px-2 py-1 text-xs font-medium text-primary bg-blue-100 rounded-full">Admin</span>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Quick Stats -->
+                    <div class="hidden md:flex items-center space-x-6 mr-6">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-newspaper text-gray-400"></i>
+                            <span class="text-sm text-gray-600">{{ stats.total_posts }} posts</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                            <span class="text-sm text-gray-600">
+                                {% if stats.unread_messages > 0 %}
+                                    <span class="text-warning font-semibold">{{ stats.unread_messages }} novas</span>
+                                {% else %}
+                                    0 novas
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="h-8 w-px bg-gray-300"></div>
+                    
+                    <a href="/" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline ml-2">Ver Site</span>
+                    </a>
+                    
+                    <a href="/auth/logout" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="hidden sm:inline ml-2">Sair</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8 fade-in">
+            <h2 class="text-3xl font-bold text-gray-900">Painel Administrativo</h2>
+            <p class="mt-2 text-gray-600">Gerencie todo o conteúdo do site</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-4 p-4 rounded-lg flex items-center justify-between fade-in
+                        {% if category == 'error' %}bg-red-50 text-red-700 border border-red-200
+                        {% elif category == 'success' %}bg-green-50 text-green-700 border border-green-200
+                        {% elif category == 'warning' %}bg-yellow-50 text-yellow-700 border border-yellow-200
+                        {% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas fa-{% if category == 'error' %}exclamation-circle{% elif category == 'success' %}check-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} mr-3"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="ml-4 text-current hover:opacity-70">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Blog Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover-scale">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Blog</h3>
+                                <p class="text-sm text-gray-500 mt-1">{{ stats.published_posts }} publicados de {{ stats.total_posts }} total</p>
+                            </div>
+                            <a href="/blog/new" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Novo Post
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if recent_posts %}
+                            <div class="space-y-4">
+                                {% for post in recent_posts[:3] %}
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-900">{{ post.title }}</h4>
+                                        <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
+                                            <span>{{ post.created_at.split('T')[0] if post.created_at else '-' }}</span>
+                                            <span class="px-2 py-1 text-xs rounded-full 
+                                                {% if post.status == 'published' %}bg-green-100 text-green-700
+                                                {% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                                                {{ post.status }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2 ml-4">
+                                        <a href="/blog/view/{{ post.id }}" class="text-blue-600 hover:text-blue-800 p-2">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="/blog/edit/{{ post.id }}" class="text-yellow-600 hover:text-yellow-800 p-2">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="/blog/delete/{{ post.id }}" method="POST" class="inline">
+                                            <button type="submit" class="text-red-600 hover:text-red-800 p-2" 
+                                                onclick="return confirm('Tem certeza que deseja excluir este post?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mt-6 text-center">
+                                <a href="/blog/posts" class="text-primary hover:text-primary-dark font-medium">
+                                    Ver todos os posts <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-8">
+                                <i class="fas fa-blog text-4xl text-gray-300 mb-4"></i>
+                                <p class="text-gray-500 mb-4">Nenhum post encontrado</p>
+                                <a href="/blog/new" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>Criar Primeiro Post
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Transparency Documents -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover-scale mt-6">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Transparência</h3>
+                                <p class="text-sm text-gray-500 mt-1">{{ stats.total_documents }} documentos</p>
+                            </div>
+                            <a href="/transparencia/upload" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-upload mr-2"></i>Upload
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if recent_documents %}
+                            <div class="space-y-3">
+                                {% for doc in recent_documents[:3] %}
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-900 text-sm">{{ doc.titulo }}</h4>
+                                        <p class="text-xs text-gray-500 mt-1">{{ doc.created_at.split('T')[0] if doc.created_at else '-' }}</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 ml-4">
+                                        <a href="/transparencia/download/{{ doc.id }}" class="text-blue-600 hover:text-blue-800 p-1">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                        <form action="/transparencia/delete/{{ doc.id }}" method="POST" class="inline">
+                                            <button type="submit" class="text-red-600 hover:text-red-800 p-1" 
+                                                onclick="return confirm('Tem certeza que deseja excluir este documento?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mt-4 text-center">
+                                <a href="/admin/documents" class="text-primary hover:text-primary-dark font-medium text-sm">
+                                    Ver todos <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-6">
+                                <i class="fas fa-file-alt text-3xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500 text-sm mb-3">Nenhum documento</p>
+                                <a href="/transparencia/upload" class="text-primary hover:text-primary-dark text-sm font-medium">
+                                    <i class="fas fa-upload mr-1"></i>Fazer Upload
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Transparency Documents -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover-scale mt-6">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Galeria</h3>
+                                <p class="text-sm text-gray-500 mt-1">{{ stats.total_documents }} Fotos</p>
+                            </div>
+                            <a href="/transparencia/upload" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-upload mr-2"></i>Upload
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if recent_documents %}
+                            <div class="space-y-3">
+                                {% for doc in recent_documents[:3] %}
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-900 text-sm">{{ doc.titulo }}</h4>
+                                        <p class="text-xs text-gray-500 mt-1">{{ doc.created_at.split('T')[0] if doc.created_at else '-' }}</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 ml-4">
+                                        <a href="/transparencia/download/{{ doc.id }}" class="text-blue-600 hover:text-blue-800 p-1">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                        <form action="/transparencia/delete/{{ doc.id }}" method="POST" class="inline">
+                                            <button type="submit" class="text-red-600 hover:text-red-800 p-1" 
+                                                onclick="return confirm('Tem certeza que deseja excluir este documento?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mt-4 text-center">
+                                <a href="/admin/documents" class="text-primary hover:text-primary-dark font-medium text-sm">
+                                    Ver todos <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-6">
+                                <i class="fas fa-file-alt text-3xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500 text-sm mb-3">Nenhum documento</p>
+                                <a href="/transparencia/upload" class="text-primary hover:text-primary-dark text-sm font-medium">
+                                    <i class="fas fa-upload mr-1"></i>Fazer Upload
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Messages Section -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover-scale">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Mensagens</h3>
+                            {% if stats.unread_messages > 0 %}
+                                <span class="px-3 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">
+                                    {{ stats.unread_messages }} novas
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if recent_messages %}
+                            <div class="space-y-4">
+                                {% for msg in recent_messages[:5] %}
+                                <div class="p-4 rounded-lg border transition-all
+                                    {% if msg.status == 'nova' %}bg-yellow-50 border-yellow-200
+                                    {% else %}bg-gray-50 border-gray-200{% endif %}">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-gray-900 text-sm">{{ msg.nome or 'Anônimo' }}</h4>
+                                            <p class="text-xs text-gray-500 mt-1">{{ msg.email }}</p>
+                                            <p class="text-sm text-gray-700 mt-2 line-clamp-2">{{ msg.mensagem }}</p>
+                                            <p class="text-xs text-gray-500 mt-2">
+                                                {{ msg.created_at.split('T')[0] if msg.created_at else '-' }}
+                                            </p>
+                                        </div>
+                                        <div class="ml-4 flex flex-col space-y-1">
+                                            {% if msg.status == 'nova' %}
+                                            <form action="{{ url_for('admin.mark_message_read', message_id=msg.id) }}" method="POST">
+                                                <button type="submit" class="text-green-600 hover:text-green-800 p-1" title="Marcar como lida">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                            <a href="mailto:{{ msg.email }}" class="text-blue-600 hover:text-blue-800 p-1" title="Responder">
+                                                <i class="fas fa-reply"></i>
+                                            </a>
+                                            <form action="{{ url_for('admin.delete_message', message_id=msg.id) }}" method="POST" 
+                                                onsubmit="return confirm('Tem certeza que deseja deletar esta mensagem?')">
+                                                <button type="submit" class="text-red-600 hover:text-red-800 p-1" title="Deletar">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mt-4 text-center">
+                                <a href="/admin/messages" class="text-primary hover:text-primary-dark font-medium text-sm">
+                                    Ver todas <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-8">
+                                <i class="fas fa-envelope text-4xl text-gray-300 mb-4"></i>
+                                <p class="text-gray-500">Nenhuma mensagem</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-6">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
+                        <div class="space-y-3">
+                            <a href="/blog/new" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-primary-50 hover:text-primary transition-all group">
+                                <div class="flex items-center">
+                                    <i class="fas fa-plus-circle text-gray-400 group-hover:text-primary mr-3"></i>
+                                    <span class="font-medium">Novo Post</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400 group-hover:text-primary"></i>
+                            </a>
+                            
+                            <a href="/transparencia/upload" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-primary-50 hover:text-primary transition-all group">
+                                <div class="flex items-center">
+                                    <i class="fas fa-file-upload text-gray-400 group-hover:text-primary mr-3"></i>
+                                    <span class="font-medium">Upload Documento</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400 group-hover:text-primary"></i>
+                            </a>
+                            
+                            <a href="/admin/messages?status=nova" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-primary-50 hover:text-primary transition-all group">
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope-open text-gray-400 group-hover:text-primary mr-3"></i>
+                                    <span class="font-medium">Mensagens Novas</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400 group-hover:text-primary"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</body>
+</html>

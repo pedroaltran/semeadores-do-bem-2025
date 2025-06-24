@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semeadores do Bem - ONG</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../static/index.css">
+
+    <link rel="icon" href="{{ url_for('static', filename='images/icone.png') }}" type="image/x-icon">
+
+    
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f97316', // orange-500
+                        secondary: '#facc15', // yellow-400
+                        accent: '#3b82f6', // blue-500
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'open-sans': ['Open Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-open-sans">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <img src="static/images/logo-clean.png" alt="Logo Semeadores do Bem" class="h-24 w-24">
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center space-x-6">
+                    <a href="#sobre" class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span>Sobre Nós</span>
+                    </a>
+                    <div class="relative group">
+                        <button class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                            <i class="fas fa-building mr-2"></i>
+                            <span>Unidades</span>
+                            <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="#unidade-ipiranga" class="block px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                Ipiranga - Serviço de Convivência
+                            </a>
+                            <a href="#unidade-aeroporto" class="block px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                Jardim Aeroporto - Apoio Social
+                            </a>
+                            <a href="#unidade-simioni" class="block px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                Simioni - Apoio Social
+                            </a>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <button class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                            <i class="fas fa-hands-helping mr-2"></i>
+                            <span>Nossos Serviços</span>
+                            <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="#servico-convivencia" class="block px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                Serviço de Convivência e Fortalecimento
+                            </a>
+                            <a href="#apoio-comunitario" class="block px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                Apoio Comunitário
+                            </a>
+                        </div>
+                    </div>
+                    <a href="#transparencia" class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                        <i class="fas fa-file-alt mr-2"></i>
+                        <span>Transparência</span>
+                    </a>
+                    <a href="#blog" class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                        <i class="fas fa-blog mr-2"></i>
+                        <span>Blog</span>
+                    </a>
+                    <a href="#parceiros" class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                        <i class="fas fa-handshake mr-2"></i>
+                        <span>Parceiros</span>
+                    </a>
+                    <a href="#contato" class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                        <i class="fas fa-envelope mr-2"></i>
+                        <span>Contato</span>
+                    </a>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="hidden lg:block">
+                    <a href="#colaborador" class="bg-primary text-white px-6 py-3 rounded-full hover:bg-orange-600 transition-colors font-semibold">
+                        Quero Ajudar
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="lg:hidden text-gray-700">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t">
+            <div class="px-4 py-2 space-y-2">
+                <a href="#sobre" class="block py-2 text-gray-700 hover:text-primary">Sobre Nós</a>
+                <div class="border-l-2 border-orange-200 pl-4">
+                    <a href="#unidade-ipiranga" class="block py-1 text-sm text-gray-600 hover:text-primary">Ipiranga</a>
+                    <a href="#unidade-aeroporto" class="block py-1 text-sm text-gray-600 hover:text-primary">Jardim Aeroporto</a>
+                    <a href="#unidade-simioni" class="block py-1 text-sm text-gray-600 hover:text-primary">Simioni</a>
+                </div>
+                <a href="#servicos" class="block py-2 text-gray-700 hover:text-primary">Nossos Serviços</a>
+                <a href="#transparencia" class="block py-2 text-gray-700 hover:text-primary">Transparência</a>
+                <a href="#blog" class="block py-2 text-gray-700 hover:text-primary">Blog</a>
+                <a href="#parceiros" class="block py-2 text-gray-700 hover:text-primary">Parceiros</a>
+                <a href="#contato" class="block py-2 text-gray-700 hover:text-primary">Contato</a>
+                <a href="#colaborador" class="block py-2 bg-primary text-white text-center rounded-full">Quero Ajudar</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-20 min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50 flex items-center">
+        <div class="container mx-auto px-4">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="inline-block bg-secondary text-accent font-semibold px-4 py-2 rounded-full mb-6">
+                        ONG Semeadores do Bem RP
+                    </span>
+                    <h1 class="text-4xl lg:text-6xl font-montserrat font-bold text-gray-800 mb-6">
+                        Transformando Vidas Através da 
+                        <span class="text-primary">Solidariedade</span>
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Promovemos o desenvolvimento integral de crianças e jovens em situação de vulnerabilidade, 
+                        oferecendo atividades educativas, artísticas e recreativas que fortalecem vínculos sociais e familiares.
+                    </p>
+                    <div class="flex flex-wrap gap-4 mb-12">
+                        <a href="#colaborador" class="bg-primary text-white px-8 py-4 rounded-full hover:bg-orange-600 transition-colors font-semibold flex items-center">
+                            <i class="fas fa-heart mr-2"></i>
+                            Quero Ajudar
+                        </a>
+                        <a href="#sobre" class="border-2 border-primary text-primary px-8 py-4 rounded-full hover:bg-primary hover:text-white transition-all font-semibold flex items-center">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Conheça Nossa História
+                        </a>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">200+</div>
+                            <div class="text-sm text-gray-600">Famílias Atendidas por mês</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">30+</div>
+                            <div class="text-sm text-gray-600">Voluntários</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">3</div>
+                            <div class="text-sm text-gray-600">Unidades</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <img src="static/images/site-2-10.jpg" alt="Semeadores do Bem em ação" class="rounded-2xl shadow-2xl">
+                    <div class="absolute -bottom-6 -left-6 bg-secondary p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-users text-3xl text-accent"></i>
+                            <div>
+                                <div class="font-bold text-accent">7 Anos</div>
+                                <div class="text-sm text-gray-600">Transformando vidas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Nós -->
+    <section id="sobre" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Quem Somos Nós</h2>
+                <div class="w-24 h-1 bg-primary mx-auto"></div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto mb-12">
+                <p class="text-lg text-gray-600 mb-6">
+                    <strong class="text-accent">Semeadores do Bem RP</strong> é uma organização da sociedade civil sem fins lucrativos, 
+                    fundada por um grupo de amigos com o propósito de promover a dignidade humana e transformar realidades por meio da solidariedade.
+                </p>
+                <p class="text-lg text-gray-600">
+                    Localizada na Rua Mato Grosso, 1147, no bairro Ipiranga, em Ribeirão Preto/SP, nossa sede oferece o 
+                    <strong class="text-accent">Serviço de Convivência e Fortalecimento de Vínculos (SCFV)</strong>, 
+                    um espaço de acolhimento, atividades educativas e culturais para crianças, adolescentes e famílias. 
+                    Além disso, realizamos ações de apoio comunitário com diversas atividades sociais voltadas para o 
+                    fortalecimento das famílias e da comunidade.
+                </p>
+            </div>
+
+            <!-- Missão, Visão e Valores -->
+            <div class="grid lg:grid-cols-3 gap-8 mb-16">
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-heart text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-accent mb-4">Missão</h3>
+                    <p class="text-gray-600">
+                        Promover o desenvolvimento integral de crianças e jovens em situação de vulnerabilidade, 
+                        oferecendo atividades educativas, artísticas e recreativas que fortalecem vínculos sociais e familiares.
+                    </p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-star text-2xl text-secondary"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-accent mb-4">Visão</h3>
+                    <p class="text-gray-600">
+                        Tornar-se referência no município de Ribeirão Preto na oferta de atividades socioeducativas, 
+                        trabalhando para proporcionar a equidade social necessária para as crianças, jovens e suas famílias.
+                    </p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-hands-helping text-2xl text-accent"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-accent mb-4">Valores</h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li><strong>Equidade:</strong> Apoio individualizado</li>
+                        <li><strong>Justiça Social:</strong> Acesso aos direitos</li>
+                        <li><strong>Garantia de Direitos:</strong> Inclusão e proteção</li>
+                        <li><strong>Dedicação:</strong> Serviços de qualidade</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Números detalhados -->
+            <div class="bg-gradient-to-r from-primary to-orange-600 rounded-2xl p-8 text-white">
+                <h3 class="text-2xl font-bold mb-6 text-center">Nosso Impacto em Números</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                    <div>
+                        <div class="text-4xl font-bold mb-2">200+</div>
+                        <div class="text-sm opacity-90">Famílias ajudadas por mês nas comunidades</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">50+</div>
+                        <div class="text-sm opacity-90">Famílias no serviço de convivência</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">30+</div>
+                        <div class="text-sm opacity-90">Voluntários ativos</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">7</div>
+                        <div class="text-sm opacity-90">Colaboradores dedicados</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Unidades -->
+    <section id="unidades" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Nossas Unidades</h2>
+                <div class="w-24 h-1 bg-primary mx-auto"></div>
+            </div>
+
+            <!-- Botão alinhado à esquerda -->
+            <div class="flex justify-start mb-6">
+                <a href="/galeria" class="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full hover:bg-blue-600 transition-all shadow-md text-sm font-semibold">
+                    <i class="fas fa-camera"></i> Ver Fotos
+                </a>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div id="unidade-ipiranga" class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-primary p-6 text-white">
+                        <i class="fas fa-map-marker-alt text-3xl mb-4"></i>
+                        <h3 class="text-2xl font-bold">Ipiranga</h3>
+                    </div>
+                    <div class="p-6">
+                        <span class="inline-block bg-yellow-100 text-accent text-sm font-semibold px-3 py-1 rounded-full mb-4">
+                            Sede Principal
+                        </span>
+                        <h4 class="font-bold text-lg mb-2">Serviço de Convivência e Fortalecimento de Vínculos</h4>
+                        <p class="text-gray-600 mb-4">
+                            Nossa sede principal oferece um espaço completo de acolhimento com atividades educativas, 
+                            artísticas e culturais para crianças, adolescentes e suas famílias.
+                        </p>
+                        <div class="text-sm text-gray-500">
+                            <i class="fas fa-location-dot mr-2"></i>
+                            Rua Mato Grosso, 1147
+                        </div>
+                    </div>
+                </div>
+
+                <div id="unidade-aeroporto" class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-secondary p-6 text-gray-800">
+                        <i class="fas fa-map-marker-alt text-3xl mb-4"></i>
+                        <h3 class="text-2xl font-bold">Jardim Aeroporto</h3>
+                    </div>
+                    <div class="p-6">
+                        <span class="inline-block bg-orange-100 text-primary text-sm font-semibold px-3 py-1 rounded-full mb-4">
+                            Apoio Social
+                        </span>
+                        <h4 class="font-bold text-lg mb-2">Centro de Apoio Comunitário</h4>
+                        <p class="text-gray-600 mb-4">
+                            Unidade focada em ações de apoio social, distribuição de cestas básicas, 
+                            roupas e assistência emergencial às famílias da região.
+                        </p>
+                        <div class="text-sm text-gray-500">
+                            <i class="fas fa-users mr-2"></i>
+                            Atendimento comunitário
+                        </div>
+                    </div>
+                </div>
+
+                <div id="unidade-simioni" class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-accent p-6 text-white">
+                        <i class="fas fa-map-marker-alt text-3xl mb-4"></i>
+                        <h3 class="text-2xl font-bold">Simioni</h3>
+                    </div>
+                    <div class="p-6">
+                        <span class="inline-block bg-blue-100 text-accent text-sm font-semibold px-3 py-1 rounded-full mb-4">
+                            Apoio Social
+                        </span>
+                        <h4 class="font-bold text-lg mb-2">Núcleo de Assistência</h4>
+                        <p class="text-gray-600 mb-4">
+                            Ponto de apoio para a comunidade local, oferecendo assistência básica, 
+                            orientação e encaminhamento para serviços sociais.
+                        </p>
+                        <div class="text-sm text-gray-500">
+                            <i class="fas fa-hands-helping mr-2"></i>
+                            Assistência e orientação
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nossos Serviços -->
+    <section id="servicos" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Nossos Serviços</h2>
+                <div class="w-24 h-1 bg-primary mx-auto"></div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Serviço de Convivência -->
+                <div id="servico-convivencia" class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-2xl p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-users text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-accent">Serviço de Convivência e Fortalecimento de Vínculos</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Espaço dedicado ao desenvolvimento integral de crianças e adolescentes através de:
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                            <span>Atividades educativas e reforço escolar</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                            <span>Oficinas artísticas e culturais</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                            <span>Esportes e recreação</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                            <span>Acompanhamento psicossocial</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                            <span>Alimentação balanceada</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Apoio Comunitário -->
+                <div id="apoio-comunitario" class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-hand-holding-heart text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-accent">Apoio Comunitário</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Projetos sociais voltados para o atendimento emergencial e suporte às famílias:
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-accent mt-1 mr-3"></i>
+                            <span>Distribuição de cestas básicas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-accent mt-1 mr-3"></i>
+                            <span>Doação de roupas e calçados</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-accent mt-1 mr-3"></i>
+                            <span>Enxovais para gestantes</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-accent mt-1 mr-3"></i>
+                            <span>Material escolar</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-accent mt-1 mr-3"></i>
+                            <span>Orientação e encaminhamento social</span>
+                        </li>
+                    </ul>
+                    <a href="#projetos-sociais" target="_blank" class="inline-block mt-6 text-accent font-semibold hover:underline">
+                        Ver todos os projetos sociais →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transparência -->
+    <section id="transparencia" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Transparência</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Aqui você encontra todos os relatórios e documentos relacionados à gestão financeira 
+                    e prestação de contas da nossa organização. A transparência é um dos nossos valores fundamentais.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% if documentos %}
+                    {% for documento in documentos %}
+                    <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-file-pdf text-5xl text-red-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">{{ documento.titulo }}</h3>
+                        <p class="text-gray-600 mb-4">{{ documento.descricao }}</p>
+                        <p class="text-sm text-gray-500 mb-4">
+                            <i class="far fa-calendar mr-2"></i>
+                            {{ documento.created_at.strftime('%d/%m/%Y') }}
+                        </p>
+                        <a href="/transparencia/download/{{ documento.id }}" 
+                           class="w-full bg-primary text-white py-3 rounded-lg hover:bg-orange-600 transition-colors font-semibold flex items-center justify-center">
+                            <i class="fas fa-download mr-2"></i>
+                            Download
+                        </a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-folder-open text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">Nenhum documento disponível no momento.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog -->
+    <section id="blog" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Blog</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600">
+                    Acompanhe nossas atividades, histórias e projetos através do nosso blog.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% if posts %}
+                    {% for post in posts %}
+                    <article class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                        {% if post.image_url %}
+                            <img src="{{ post.image_url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                        {% else %}
+                            <div class="h-48 bg-gradient-to-br from-orange-100 to-yellow-100 flex items-center justify-center">
+                                <i class="fas fa-newspaper text-6xl text-orange-300"></i>
+                            </div>
+                        {% endif %}
+                        <div class="p-6">
+                            <div class="text-sm text-gray-500 mb-2">
+                                <i class="far fa-calendar mr-2"></i>
+                                {{ post.created_at.strftime('%d/%m/%Y') }}
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">{{ post.title }}</h3>
+                            {% if post.excerpt %}
+                                {% set preview = post.excerpt|striptags|truncate(100, True, '...') %}
+                            {% else %}
+                                {% set preview = post.content|striptags|truncate(100, True, '...') %}
+                            {% endif %}
+                            <p class="text-gray-600 mb-4">
+                                {{ preview.replace('\n', '<br>')|safe }}
+                            </p>
+                            <a href="/blog/view/{{ post.id }}" class="text-primary font-semibold hover:text-orange-600 transition-colors">
+                                Continuar lendo →
+                            </a>
+                        </div>
+                    </article>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-newspaper text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">Nenhuma publicação disponível no momento.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Parceiros -->
+    <section id="parceiros" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Nossos Parceiros</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Nosso trabalho só é possível graças ao apoio de nossos parceiros e colaboradores. 
+                    Juntos, conseguimos ampliar nosso impacto e levar mais ajuda a quem precisa.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Placeholder para parceiros -->
+                <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-8 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-handshake text-4xl text-secondary mb-3"></i>
+                        <p class="text-gray-600">Seja um parceiro</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-8 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-handshake text-4xl text-secondary mb-3"></i>
+                        <p class="text-gray-600">Seja um parceiro</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-8 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-handshake text-4xl text-secondary mb-3"></i>
+                        <p class="text-gray-600">Seja um parceiro</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-8 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-handshake text-4xl text-secondary mb-3"></i>
+                        <p class="text-gray-600">Seja um parceiro</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CTA Parceiros -->
+            <div class="bg-gradient-to-r from-primary to-orange-600 rounded-2xl p-8 text-white text-center">
+                <h3 class="text-2xl font-bold mb-4">Quer se tornar um parceiro?</h3>
+                <p class="text-lg mb-6 opacity-90">
+                    Entre em contato conosco e saiba como sua empresa pode contribuir com nossa causa.
+                </p>
+                <a href="#contato" class="inline-block bg-white text-primary px-8 py-4 rounded-full hover:bg-gray-100 transition-colors font-semibold">
+                    Fale Conosco
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seja um Colaborador -->
+    <section id="colaborador" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Seja um Colaborador</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h3 class="text-2xl font-bold text-accent mb-4">Como você pode ajudar?</h3>
+                    <p class="text-lg text-gray-600">
+                        Existem diversas formas de contribuir com o Semeadores do Bem. 
+                        Escolha a que melhor se adapta ao seu perfil e faça parte dessa corrente do bem!
+                    </p>
+                </div>
+
+                <!-- Formas de Contribuir -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <div class="bg-orange-50 rounded-xl p-6 text-center hover:bg-orange-100 transition-colors">
+                        <i class="fas fa-hand-holding-usd text-4xl text-primary mb-3"></i>
+                        <h4 class="font-bold mb-2">Doação em Dinheiro</h4>
+                        <p class="text-sm text-gray-600">Contribua financeiramente</p>
+                    </div>
+                    <div class="bg-yellow-50 rounded-xl p-6 text-center hover:bg-yellow-100 transition-colors">
+                        <i class="fas fa-shopping-basket text-4xl text-secondary mb-3"></i>
+                        <h4 class="font-bold mb-2">Doação de Alimentos</h4>
+                        <p class="text-sm text-gray-600">Cestas básicas e alimentos</p>
+                    </div>
+                    <div class="bg-blue-50 rounded-xl p-6 text-center hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-tshirt text-4xl text-accent mb-3"></i>
+                        <h4 class="font-bold mb-2">Doação de Roupas</h4>
+                        <p class="text-sm text-gray-600">Roupas em bom estado</p>
+                    </div>
+                    <div class="bg-orange-50 rounded-xl p-6 text-center hover:bg-orange-100 transition-colors">
+                        <i class="fas fa-couch text-4xl text-primary mb-3"></i>
+                        <h4 class="font-bold mb-2">Móveis e Eletrodomésticos</h4>
+                        <p class="text-sm text-gray-600">Utensílios domésticos</p>
+                    </div>
+                    <div class="bg-yellow-50 rounded-xl p-6 text-center hover:bg-yellow-100 transition-colors">
+                        <i class="fas fa-graduation-cap text-4xl text-secondary mb-3"></i>
+                        <h4 class="font-bold mb-2">Material Escolar</h4>
+                        <p class="text-sm text-gray-600">Apoie a educação</p>
+                    </div>
+                    <div class="bg-blue-50 rounded-xl p-6 text-center hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-users text-4xl text-accent mb-3"></i>
+                        <h4 class="font-bold mb-2">Seja Voluntário</h4>
+                        <p class="text-sm text-gray-600">Doe seu tempo e talento</p>
+                    </div>
+                </div>
+                
+                <!-- Formulário -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <form id="colaborador-form" method="POST" action="/api/enviar-email">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    Nome completo <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="text" name="nome" required 
+                                           class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:border-primary transition-colors"
+                                           placeholder="Digite seu nome completo">
+                                    <i class="fas fa-user absolute left-4 top-4 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    Telefone <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="tel" name="telefone" required 
+                                           class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:border-primary transition-colors"
+                                           placeholder="(XX) XXXXX-XXXX">
+                                    <i class="fas fa-phone absolute left-4 top-4 text-gray-400"></i>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">Inclua o DDD e os 9 dígitos</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                E-mail <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="email" name="email" required 
+                                       class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:border-primary transition-colors"
+                                       placeholder="exemplo@email.com">
+                                <i class="fas fa-envelope absolute left-4 top-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                Como deseja contribuir? <span class="text-red-500">*</span>
+                            </label>
+                            <select name="tipo_contribuicao" required 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary transition-colors">
+                                <option value="">Selecione uma opção</option>
+                                <option value="voluntario">Quero ser voluntário</option>
+                                <option value="doacao-dinheiro">Quero fazer doação em dinheiro</option>
+                                <option value="doacao-alimentos">Quero doar alimentos</option>
+                                <option value="doacao-roupas">Quero doar roupas</option>
+                                <option value="doacao-moveis">Quero doar móveis/eletrodomésticos</option>
+                                <option value="doacao-material-escolar">Quero doar material escolar</option>
+                                <option value="outro">Outro tipo de contribuição</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                Sua mensagem
+                            </label>
+                            <textarea name="mensagem" rows="5" 
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary transition-colors"
+                                      placeholder="Descreva como gostaria de ajudar ou sua dúvida..."></textarea>
+                        </div>
+                        
+                        <button type="submit" 
+                                class="w-full mt-6 bg-primary text-white py-4 rounded-lg hover:bg-orange-600 transition-colors font-semibold flex items-center justify-center">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Enviar mensagem
+                        </button>
+                        
+                        <div id="colaborador-feedback" class="mt-4"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Fale Conosco</h2>
+                <div class="w-24 h-1 bg-primary mx-auto"></div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="lg:col-span-2">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-map-marker-alt text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="font-bold text-lg mb-2">Endereço</h3>
+                            <p class="text-gray-600">Rua Mato Grosso, 1147</p>
+                            <p class="text-gray-600">Bairro Ipiranga</p>
+                            <p class="text-gray-600">Ribeirão Preto - SP</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+                            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-phone text-2xl text-secondary"></i>
+                            </div>
+                            <h3 class="font-bold text-lg mb-2">Telefone</h3>
+                            <p class="text-gray-600">(16) 3621-6369</p>
+                            <a href="tel:+551636216369" class="text-primary hover:text-orange-600 transition-colors">
+                                Ligar agora
+                            </a>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-envelope text-2xl text-accent"></i>
+                            </div>
+                            <h3 class="font-bold text-lg mb-2">E-mail</h3>
+                            <p class="text-gray-600">contato@semeadoresdebem.org.br</p>
+                            <a href="mailto:contato@semeadoresdebem.org.br" class="text-primary hover:text-orange-600 transition-colors">
+                                Enviar e-mail
+                            </a>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-clock text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="font-bold text-lg mb-2">Horário</h3>
+                            <p class="text-gray-600">Segunda a Sexta: 9h às 17h</p>
+                            <p class="text-gray-600">Sábado: 9h às 12h</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                        <h3 class="text-2xl font-bold mb-6">Redes Sociais</h3>
+                        <div class="space-y-4">
+                            <a href="https://www.facebook.com/semeadoresdobemrp" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center space-x-3 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fab fa-facebook-f text-xl"></i>
+                                <span>Facebook</span>
+                            </a>
+                            <a href="https://www.instagram.com/semeadoresdobemrp" target="_blank" rel="noopener noreferrer"  class="flex items-center justify-center space-x-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all">
+                                <i class="fab fa-instagram text-xl"></i>
+                                <span>Instagram</span>
+                            </a>
+                            <a href="https://wa.me/5516992650151" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center space-x-3 bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors">
+                                <i class="fab fa-whatsapp text-xl"></i>
+                                <span>WhatsApp</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">Semeadores do Bem</h3>
+                    <p class="text-gray-300">
+                        Transformando vidas através da solidariedade e do amor ao próximo.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Links Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#sobre" class="text-gray-300 hover:text-primary transition-colors">Sobre Nós</a></li>
+                        <li><a href="#servicos" class="text-gray-300 hover:text-primary transition-colors">Nossos Serviços</a></li>
+                        <li><a href="#transparencia" class="text-gray-300 hover:text-primary transition-colors">Transparência</a></li>
+                        <li><a href="#colaborador" class="text-gray-300 hover:text-primary transition-colors">Como Ajudar</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contato</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="tel:+551636216369" class="text-gray-300 hover:text-primary transition-colors">
+                                <i class="fas fa-phone mr-2"></i>(16) 3621-6369
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:contato@semeadoresdebem.org.br" class="text-gray-300 hover:text-primary transition-colors">
+                                <i class="fas fa-envelope mr-2"></i>contato@semeadoresdebem.org.br
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://maps.app.goo.gl/XXX" target="_blank" class="text-gray-300 hover:text-primary transition-colors">
+                                <i class="fas fa-map-marker-alt mr-2"></i>Rua Mato Grosso, 1147, Ipiranga
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="border-gray-700 mb-8">
+            
+            <div class="text-center text-gray-400">
+                <p>&copy; 2025 Semeadores do Bem - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login/Admin buttons for authenticated users -->
+    {% if is_authenticated %}
+    <div class="fixed bottom-4 right-4 space-y-2">
+        <a href="/admin" class="block bg-primary text-white px-4 py-2 rounded-lg shadow-lg hover:bg-orange-600 transition-colors">
+            <i class="fas fa-user-shield mr-2"></i>Painel Admin
+        </a>
+        <a href="/auth/logout" class="block bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition-colors">
+            <i class="fas fa-sign-out-alt mr-2"></i>Sair
+        </a>
+    </div>
+    {% else %}
+    <a href="/auth/login" class="fixed bottom-4 right-4 bg-primary text-white px-4 py-2 rounded-lg shadow-lg hover:bg-orange-600 transition-colors">
+        <i class="fas fa-user mr-2"></i>Login
+    </a>
+    {% endif %}
+
+    <!-- Scripts -->
+    <script src="static/js/main.js"></script>
+</body>
+</html>

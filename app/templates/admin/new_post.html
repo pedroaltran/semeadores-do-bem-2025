@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Publicação - Semeadores do Bem</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='images/icone.png') }}" type="image/x-icon">
+
+    <style>
+        :root {
+            --primary-color: #4A9FE6;
+            --primary-dark: #2C5F8A;
+            --accent-color: #FFD166;
+            --text-color: #333333;
+            --text-light: #666666;
+            --bg-light: #F5F7FA;
+            --border-color: #E1E4E8;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-color);
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        .new-post-container {
+            padding: 2rem 0;
+        }
+
+        .new-post-header {
+            margin-bottom: 2rem;
+        }
+
+        .new-post-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .form-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .form-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .card-header-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        #editor-container {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .ql-editor {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+        }
+
+        .image-preview {
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        .notification {
+            border-radius: 8px;
+        }
+
+        .button {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+
+        .button.is-primary {
+            background-color: var(--primary-color);
+        }
+
+        .button.is-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .button.is-light {
+            background-color: var(--bg-light);
+            color: var(--text-color);
+        }
+
+        .button.is-light:hover {
+            background-color: var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <strong>Semeadores do Bem</strong>
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a href="/admin" class="button is-light">
+                            <span class="icon">
+                                <i class="fas fa-arrow-left"></i>
+                            </span>
+                            <span>Voltar ao Painel</span>
+                        </a>
+                        <a href="/logout" class="button is-danger">
+                            <span class="icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </span>
+                            <span>Sair</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container new-post-container">
+        <div class="new-post-header">
+            <h1 class="title is-2">Nova Publicação</h1>
+            <p class="subtitle is-5">Crie uma nova publicação para o blog</p>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <form id="new-post-form" method="POST" enctype="multipart/form-data">
+                    <div class="field">
+                        <label class="label">Título da Publicação</label>
+                        <div class="control">
+                            <input class="input" type="text" id="title" name="title" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Conteúdo</label>
+                        <div class="control">
+                            <div id="editor-container"></div>
+                            <input type="hidden" id="content" name="content">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Imagem de Capa (opcional)</label>
+                        <div class="control">
+                            <div class="file has-name is-fullwidth">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" id="image" name="image" accept="image/*">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i class="fas fa-upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Escolher arquivo...
+                                        </span>
+                                    </span>
+                                    <span class="file-name">
+                                        Nenhum arquivo selecionado
+                                    </span>
+                                </label>
+                            </div>
+                            <div id="image-preview" class="image-preview"></div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Resumo (Excerpt)</label>
+                        <div class="control">
+                            <textarea class="textarea" id="excerpt" name="excerpt" rows="2" placeholder="Um breve resumo do post que aparecerá na listagem"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Status</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select id="status" name="status">
+                                    <option value="draft">Rascunho</option>
+                                    <option value="published">Publicado</option>
+                                    <option value="archived">Arquivado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field is-grouped is-grouped-right">
+                        <div class="control">
+                            <a href="/admin" class="button is-light">Cancelar</a>
+                        </div>
+                        <div class="control">
+                            <button type="submit" class="button is-primary">
+                                <span class="icon">
+                                    <i class="fas fa-save"></i>
+                                </span>
+                                <span>Salvar Publicação</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        // Inicializar editor Quill
+        const quill = new Quill('#editor-container', {
+            theme: 'snow',
+            placeholder: 'Escreva o conteúdo da sua publicação aqui...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['link'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Preview de imagem
+        const imageInput = document.querySelector('.file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const fileName = document.querySelector('.file-name');
+
+        imageInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                fileName.textContent = this.files[0].name;
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    imagePreview.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                fileName.textContent = 'Nenhum arquivo selecionado';
+                imagePreview.innerHTML = '';
+                imagePreview.style.display = 'none';
+            }
+        });
+
+        // Manipulador de envio do formulário
+        const newPostForm = document.getElementById('new-post-form');
+        const submitButton = newPostForm.querySelector('button[type="submit"]');
+        
+        newPostForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevenir envio padrão do formulário
+            
+            // Atualizar conteúdo do editor no campo oculto antes do envio
+            const editorContent = quill.root.innerHTML;
+            document.getElementById('content').value = editorContent;
+            
+            // Validação básica
+            const title = document.getElementById('title').value.trim();
+            const content = quill.getText().trim();
+            
+            if (title.length < 5) {
+                showNotification('O título deve ter pelo menos 5 caracteres', 'error');
+                return;
+            }
+            
+            if (content.length < 10) {
+                showNotification('O conteúdo deve ter pelo menos 10 caracteres', 'error');
+                return;
+            }
+            
+            // Mostrar loading
+            submitButton.classList.add('is-loading');
+            newPostForm.classList.add('form-loading');
+            
+            // Enviar formulário via AJAX
+            const formData = new FormData(newPostForm);
+            
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    // Redirecionar para o dashboard após 1 segundo
+                    setTimeout(() => {
+                        window.location.href = '/admin';
+                    }, 1000);
+                } else {
+                    showNotification(data.message, 'error');
+                    // Remover loading
+                    submitButton.classList.remove('is-loading');
+                    newPostForm.classList.remove('form-loading');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                showNotification('Erro ao criar post. Tente novamente.', 'error');
+                // Remover loading
+                submitButton.classList.remove('is-loading');
+                newPostForm.classList.remove('form-loading');
+            });
+        });
+
+        function showNotification(message, type = 'info') {
+            // Remover notificações existentes
+            const existingNotifications = document.querySelectorAll('.notification.is-fixed');
+            existingNotifications.forEach(n => n.remove());
+            
+            // Criar nova notificação
+            const notification = document.createElement('div');
+            notification.className = `notification is-${type === 'error' ? 'danger' : type} is-fixed`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 1001;
+                max-width: 400px;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            notification.innerHTML = `
+                <button class="delete"></button>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+            
+            // Permitir fechar manualmente
+            notification.querySelector('.delete').addEventListener('click', () => {
+                notification.remove();
+            });
+        }
+
+        // Adicionar CSS para animação
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

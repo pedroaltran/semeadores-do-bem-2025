@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria de Fotos | Semeadores do Bem</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Lightbox2 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/app/static/index.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/icone.png') }}" type="image/x-icon">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f97316',
+                        secondary: '#facc15',
+                        accent: '#3b82f6',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'open-sans': ['Open Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-open-sans bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <img src="{{ url_for('static', filename='images/logo-clean.png') }}" alt="Logo Semeadores do Bem" class="h-24 w-24">
+                        <span class="ml-3 text-xl font-montserrat font-bold text-gray-800 hidden sm:block">
+                            Semeadores do Bem
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Link para voltar -->
+                <div>
+                    <a href="/" class="text-gray-700 hover:text-primary transition-colors flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span class="hidden sm:inline">Voltar ao site</span>
+                        <span class="sm:hidden">Voltar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Galeria -->
+    <section class="pt-32 pb-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Galeria de Fotos</h1>
+                <p class="text-lg text-gray-600">Explore os momentos capturados em nossas unidades e projetos.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- Exemplo de imagem -->
+                <a href="/static/uploads/galeria/foto1.jpg" data-lightbox="galeria" data-title="Legenda da Foto 1">
+                    <img src="/static/uploads/galeria/foto1.jpg" alt="Legenda da Foto 1" class="rounded-xl shadow-md hover:shadow-xl transition-shadow">
+                </a>
+                <a href="/static/uploads/galeria/foto2.jpg" data-lightbox="galeria" data-title="Legenda da Foto 2">
+                    <img src="/static/uploads/galeria/foto2.jpg" alt="Legenda da Foto 2" class="rounded-xl shadow-md hover:shadow-xl transition-shadow">
+                </a>
+                <!-- Adicione mais fotos aqui -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="bg-white border-t py-6 text-center text-gray-600 text-sm">
+        &copy; 2025 ONG Semeadores do Bem. Todos os direitos reservados.
+    </footer>
+
+    <!-- Lightbox2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+</body>
+</html>
