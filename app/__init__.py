@@ -88,12 +88,14 @@ def register_blueprints(app):
     from app.routes.main_routes import main_bp
     from app.routes.auth_routes import auth_bp
     from app.routes.blog_routes import blog_bp
+    from app.routes.galeria_routes import galeria_bp
     from app.routes.admin_routes import admin_bp
     from app.routes.transparency_routes import transparency_bp
     
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(blog_bp, url_prefix='/blog')
+    app.register_blueprint(galeria_bp, url_prefix='/galeria')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(transparency_bp, url_prefix='/transparencia')
 

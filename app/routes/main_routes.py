@@ -125,7 +125,3 @@ def enviar_email():
             'success': False, 
             'message': f'Erro ao processar mensagem: {error_message}'
         }), 500
-
-@main_bp.route('/galeria')
-def galeria():
-    abort(503)

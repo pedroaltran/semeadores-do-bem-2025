@@ -39,6 +39,22 @@ def dashboard():
         # Total de documentos
         docs_response = supabase.table('transparency_documents').select('id').execute()
         stats['total_documents'] = len(docs_response.data) if docs_response.data else 0
+
+        # Total de fotos na galeria
+        fotos_response = supabase.table('gallery_images').select('id').execute()
+        stats['total_fotos'] = len(fotos_response.data) if fotos_response.data else 0
+
+        # Imagens recentes da galeria
+        gallery_response = supabase.table('gallery_images').select('*').order('created_at', desc=True).limit(5).execute()
+        recent_images = [
+            {
+                'id': img['id'],
+                'url': img['file_path'],
+                'name': img.get('titulo') or img.get('original_filename', 'sem_titulo')
+            }
+            for img in gallery_response.data
+        ] if gallery_response.data else []
+
         
         # Mensagens não lidas
         messages_response = supabase.table('contact_messages').select('id').eq('status', 'nova').execute()
@@ -62,12 +78,14 @@ def dashboard():
         recent_posts = []
         recent_messages = []
         recent_documents = []
+        recent_images = []
     
     return render_template('admin/dashboard.html', 
                            stats=stats,
                            recent_posts=recent_posts,
                            recent_messages=recent_messages,
-                           recent_documents=recent_documents)
+                           recent_documents=recent_documents,
+                           recent_images=recent_images)
 
 @admin_bp.route('/messages')
 @login_required

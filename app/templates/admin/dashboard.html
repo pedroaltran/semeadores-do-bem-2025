@@ -245,62 +245,56 @@
                     </div>
                 </div>
 
-                <!-- Transparency Documents -->
+                <!-- Gallery Photos -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover-scale mt-6">
                     <div class="p-6 border-b border-gray-200">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900">Galeria</h3>
-                                <p class="text-sm text-gray-500 mt-1">{{ stats.total_documents }} Fotos</p>
+                                <p class="text-sm text-gray-500 mt-1">{{ stats.total_images }} fotos</p>
                             </div>
-                            <a href="/transparencia/upload" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors">
+                            <a href="/galeria/upload" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors">
                                 <i class="fas fa-upload mr-2"></i>Upload
                             </a>
                         </div>
                     </div>
-                    
+
                     <div class="p-6">
-                        {% if recent_documents %}
-                            <div class="space-y-3">
-                                {% for doc in recent_documents[:3] %}
-                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                                    <div class="flex-1">
-                                        <h4 class="font-medium text-gray-900 text-sm">{{ doc.titulo }}</h4>
-                                        <p class="text-xs text-gray-500 mt-1">{{ doc.created_at.split('T')[0] if doc.created_at else '-' }}</p>
-                                    </div>
-                                    <div class="flex items-center space-x-2 ml-4">
-                                        <a href="/transparencia/download/{{ doc.id }}" class="text-blue-600 hover:text-blue-800 p-1">
-                                            <i class="fas fa-download"></i>
+                        {% if recent_images %}
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                {% for img in recent_images[:6] %}
+                                    <div class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow">
+                                        <a href="{{ img.url }}" data-lightbox="galeria" data-title="{{ img.name }}">
+                                            <img src="{{ img.url }}" alt="{{ img.name }}" class="w-full h-48 object-cover">
                                         </a>
-                                        <form action="/transparencia/delete/{{ doc.id }}" method="POST" class="inline">
-                                            <button type="submit" class="text-red-600 hover:text-red-800 p-1" 
-                                                onclick="return confirm('Tem certeza que deseja excluir este documento?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+                                        <div class="flex justify-between items-center p-2 text-sm text-gray-600">
+                                            <span class="truncate">{{ img.name }}</span>
+                                            <form action="/galeria/delete/{{ img.id }}" method="POST" onsubmit="return confirm('Excluir esta imagem?')">
+                                                <button class="text-red-600 hover:text-red-800" title="Excluir">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
                                 {% endfor %}
                             </div>
-                            
+
                             <div class="mt-4 text-center">
-                                <a href="/admin/documents" class="text-primary hover:text-primary-dark font-medium text-sm">
-                                    Ver todos <i class="fas fa-arrow-right ml-1"></i>
+                                <a href="{{ url_for('gallery.admin') }}" class="text-primary hover:text-primary-dark font-medium text-sm">
+                                    Ver todas <i class="fas fa-arrow-right ml-1"></i>
                                 </a>
                             </div>
                         {% else %}
                             <div class="text-center py-6">
-                                <i class="fas fa-file-alt text-3xl text-gray-300 mb-3"></i>
-                                <p class="text-gray-500 text-sm mb-3">Nenhum documento</p>
-                                <a href="/transparencia/upload" class="text-primary hover:text-primary-dark text-sm font-medium">
+                                <i class="fas fa-image text-4xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500 text-sm mb-3">Nenhuma imagem na galeria</p>
+                                <a href="/galeria/upload" class="text-primary hover:text-primary-dark text-sm font-medium">
                                     <i class="fas fa-upload mr-1"></i>Fazer Upload
                                 </a>
                             </div>
                         {% endif %}
                     </div>
                 </div>
-
-            </div>
 
             <!-- Messages Section -->
             <div class="lg:col-span-1">

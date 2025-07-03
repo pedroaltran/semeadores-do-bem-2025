@@ -44,6 +44,7 @@ class Config:
     ALLOWED_EXTENSIONS_IMG = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     BUCKET_DOCUMENTS = 'documents'
     BUCKET_BLOG_IMAGES = 'blog-images'
+    BUCKET_IMAGES = 'gallery'
     
     # Flask Configuration
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max upload

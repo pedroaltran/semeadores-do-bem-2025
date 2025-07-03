@@ -73,16 +73,20 @@
                 <h1 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Galeria de Fotos</h1>
                 <p class="text-lg text-gray-600">Explore os momentos capturados em nossas unidades e projetos.</p>
             </div>
-
+            
+            {% if images %}
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <!-- Exemplo de imagem -->
-                <a href="/static/uploads/galeria/foto1.jpg" data-lightbox="galeria" data-title="Legenda da Foto 1">
-                    <img src="/static/uploads/galeria/foto1.jpg" alt="Legenda da Foto 1" class="rounded-xl shadow-md hover:shadow-xl transition-shadow">
-                </a>
-                <a href="/static/uploads/galeria/foto2.jpg" data-lightbox="galeria" data-title="Legenda da Foto 2">
-                    <img src="/static/uploads/galeria/foto2.jpg" alt="Legenda da Foto 2" class="rounded-xl shadow-md hover:shadow-xl transition-shadow">
-                </a>
-                <!-- Adicione mais fotos aqui -->
+                {% for img in images %}
+                    <a href="{{ img.file_path }}" data-lightbox="galeria" data-title="{{ img.titulo or 'Sem título' }}">
+                        <img src="{{ img.file_path }}" alt="{{ img.titulo or 'Sem título' }}" class="rounded-xl shadow-md hover:shadow-xl transition-shadow">
+                    </a>
+                {% else %}
+                    <div class="col-span-full text-center text-gray-500 py-12">
+                        <i class="fas fa-image text-4xl mb-4"></i>
+                        <p class="text-lg">Nenhuma imagem encontrada na galeria.</p>
+                    </div>
+                {% endfor %}
+                {% endif %}
             </div>
         </div>
     </section>
