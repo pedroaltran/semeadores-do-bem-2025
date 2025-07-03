@@ -147,34 +147,21 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-white has-shadow" role="navigation" aria-label="main navigation" style="border-bottom: 1px solid #e4e7eb;">
+    <div class="container is-max-desktop">
         <div class="navbar-brand">
-            <a class="navbar-item" href="/">
-                <strong>Semeadores do Bem</strong>
-            </a>
+        <a href="{{ url_for('blog.posts') }}" class="navbar-item has-text-grey-dark" title="Voltar">
+            <span class="icon">
+            <i class="fas fa-arrow-left"></i>
+            </span>
+        </a>
+        <span class="navbar-item is-size-5 has-text-weight-semibold has-text-dark" style="margin-left: 0.75rem;">
+            Novo Post
+        </span>
         </div>
-
-        <div class="navbar-menu">
-            <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a href="/admin" class="button is-light">
-                            <span class="icon">
-                                <i class="fas fa-arrow-left"></i>
-                            </span>
-                            <span>Voltar ao Painel</span>
-                        </a>
-                        <a href="/logout" class="button is-danger">
-                            <span class="icon">
-                                <i class="fas fa-sign-out-alt"></i>
-                            </span>
-                            <span>Sair</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
     </nav>
+
 
     <!-- Main Content -->
     <div class="container new-post-container">
