@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/app/static/index.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/icone.png') }}" type="image/x-icon">
 
     <script>
@@ -38,17 +38,70 @@
             }
         }
     </script>
+
+    <style>
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
 </head>
 <body class="font-open-sans bg-gray-50">
     <!-- Navbar -->
-    <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
+    <nav class="fixed top-0 w-full bg-white shadow-lg z-50 backdrop-blur-sm bg-white/95">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <a href="/" class="flex items-center">
-                        <img src="{{ url_for('static', filename='images/logosemeadores.png') }}" alt="Logo Semeadores do Bem" class="h-16 w-16">
-                        <span class="ml-3 text-xl font-montserrat font-bold text-gray-800 hidden sm:block">
+                    <a href="/" class="flex items-center group">
+                        <img src="{{ url_for('static', filename='images/logosemeadores.png') }}" alt="Logo Semeadores do Bem" class="h-16 w-16 transition-transform group-hover:scale-105">
+                        <span class="ml-3 text-xl font-montserrat font-bold text-gray-800 hidden sm:block group-hover:text-primary transition-colors">
                             Semeadores do Bem
                         </span>
                     </a>
@@ -66,37 +119,237 @@
         </div>
     </nav>
 
-    <!-- Galeria -->
-    <section class="pt-32 pb-20">
+    <!-- Hero Section -->
+    <section class="pt-32 pb-12 bg-gradient-to-br from-primary/5 to-secondary/5">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h1 class="text-4xl font-montserrat font-bold text-gray-800 mb-4">Galeria de Fotos</h1>
-                <p class="text-lg text-gray-600">Explore os momentos capturados em nossas unidades e projetos.</p>
-            </div>
-            
-            {% if images %}
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {% for img in images %}
-                    <a href="{{ img.file_path }}" data-lightbox="galeria" data-title="{{ img.titulo or 'Sem título' }}">
-                        <img src="{{ img.file_path }}" alt="{{ img.titulo or 'Sem título' }}" class="rounded-xl shadow-md hover:shadow-xl transition-shadow">
-                    </a>
-                {% else %}
-                    <div class="col-span-full text-center text-gray-500 py-12">
-                        <i class="fas fa-image text-4xl mb-4"></i>
-                        <p class="text-lg">Nenhuma imagem encontrada na galeria.</p>
+            <div class="text-center max-w-3xl mx-auto">
+                <h1 class="text-5xl md:text-6xl font-montserrat font-bold text-gray-800 mb-6">
+                    Galeria de <span class="text-primary">Momentos</span>
+                </h1>
+                <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                    Explore os momentos especiais capturados em nossas unidades e projetos. 
+                    Cada imagem conta uma história de esperança, transformação e amor.
+                </p>
+                <div class="flex items-center justify-center space-x-4 text-gray-500">
+                    <div class="flex items-center">
+                        <i class="fas fa-images mr-2 text-primary"></i>
+                        <span>{{ images|length if images else 0 }} fotos</span>
                     </div>
-                {% endfor %}
-                {% endif %}
+                    <div class="w-1 h-1 bg-gray-400 rounded-full"></div>
+                    <div class="flex items-center">
+                        <i class="fas fa-heart mr-2 text-red-500"></i>
+                        <span>Momentos únicos</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Rodapé -->
-    <footer class="bg-white border-t py-6 text-center text-gray-600 text-sm">
-        &copy; 2025 ONG Semeadores do Bem. Todos os direitos reservados.
+    <!-- Gallery Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            {% if images %}
+                <!-- Filter Buttons -->
+                <div class="flex justify-center mb-12">
+                    <div class="bg-white rounded-full p-2 shadow-lg">
+                        <button class="filter-btn active px-6 py-2 rounded-full font-medium transition-all" data-filter="all">
+                            Todas as fotos
+                        </button>
+                        <button class="filter-btn px-6 py-2 rounded-full font-medium transition-all" data-filter="recent">
+                            Recentes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Gallery Grid -->
+                <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {% for img in images %}
+                        <div class="gallery-item bg-white shadow-lg" data-date="{{ img.created_at }}">
+                            <a href="{{ img.file_path }}" data-lightbox="galeria" data-title="{{ img.titulo or 'Sem título' }}{% if img.descricao %} - {{ img.descricao }}{% endif %}">
+                                <img src="{{ img.file_path }}" alt="{{ img.titulo or 'Sem título' }}" loading="lazy">
+                                <div class="gallery-overlay">
+                                    <h3 class="font-semibold text-lg mb-1">{{ img.titulo or 'Sem título' }}</h3>
+                                    {% if img.descricao %}
+                                        <p class="text-sm opacity-90">{{ img.descricao[:100] }}{% if img.descricao|length > 100 %}...{% endif %}</p>
+                                    {% endif %}
+                                    <div class="flex items-center mt-2 text-xs opacity-75">
+                                        <i class="fas fa-calendar-alt mr-1"></i>
+                                        <span>{{ img.created_at[:10].split('-')|reverse|join('/') }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Load More Button -->
+                <div class="text-center mt-12">
+                    <button id="load-more-btn" class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full font-medium transition-all transform hover:scale-105 shadow-lg hidden">
+                        <i class="fas fa-plus mr-2"></i>
+                        Carregar mais fotos
+                    </button>
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="text-center py-20">
+                    <div class="max-w-md mx-auto">
+                        <div class="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-images text-4xl text-gray-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Galeria em construção</h3>
+                        <p class="text-gray-600 mb-8">
+                            Nossa galeria está sendo preparada com muito carinho. 
+                            Em breve você poderá ver os momentos especiais de nossos projetos.
+                        </p>
+                        <a href="{{ url_for('main.home') }}" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full font-medium transition-all inline-flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Voltar ao início
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-16 bg-gradient-to-r from-primary to-secondary">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-2xl mx-auto text-white">
+                <h2 class="text-3xl font-montserrat font-bold mb-4">Faça parte da nossa história</h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Cada foto representa vidas transformadas. Junte-se a nós nessa missão de amor e esperança.
+                </p>
+                <a href="{{ url_for('main.home') }}#contato" class="bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-full font-medium transition-all inline-flex items-center transform hover:scale-105">
+                    <i class="fas fa-heart mr-2"></i>
+                    Quero contribuir
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <img src="{{ url_for('static', filename='images/logosemeadores.png') }}" alt="Logo" class="h-12 w-12 mr-3">
+                        <span class="text-xl font-montserrat font-bold">Semeadores do Bem</span>
+                    </div>
+                    <p class="text-gray-400">
+                        Transformando vidas através do amor, cuidado e esperança.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Links Rápidos</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{{ url_for('main.home') }}#sobre" class="hover:text-white transition-colors">Sobre Nós</a></li>
+                        <li><a href="{{ url_for('main.home') }}#servicos" class="hover:text-white transition-colors">Nosso Serviços</a></li>
+                        <li><a href="{{ url_for('main.home') }}#transparencia" class="hover:text-white transition-colors">Transparência</a></li>
+                        <li><a href="{{ url_for('main.home') }}#colaborador" class="hover:text-white transition-colors">Como Ajudar</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contato</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="tel:+551631014848" class="text-gray-300 hover:text-primary transition-colors">
+                                <i class="fas fa-phone mr-2"></i>(16) 3101-4848
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:semeadoresdobemrp@gmail.com" class="text-gray-300 hover:text-primary transition-colors">
+                                <i class="fas fa-envelope mr-2"></i>semeadoresdobemrp@gmail.com
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://maps.app.goo.gl/XXX" target="_blank" class="text-gray-300 hover:text-primary transition-colors">
+                                <i class="fas fa-map-marker-alt mr-2"></i>Rua Mato Grosso, 1147, Ipiranga
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center text-gray-400 mt-12">
+                <p>&copy; 2025 Semeadores do Bem - Todos os direitos reservados</p><br>
+                Desenvolvido por 
+                <a href="https://www.linkedin.com/in/pedroaltran/" target="_blank" rel="noopener noreferrer" style="font-weight: bold; color: #00bfff;">
+                    Pedro Altran <i class="fas fa-heart" style="color: var(--primary-color);"></i>
+                </a> 
+            </div>
+
+        </div>
     </footer>
 
     <!-- Lightbox2 JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active', 'bg-primary', 'text-white'));
+                this.classList.add('active', 'bg-primary', 'text-white');
+
+                const filter = this.dataset.filter;
+                
+                galleryItems.forEach(item => {
+                    if (filter === 'all') {
+                        item.style.display = 'block';
+                    } else if (filter === 'recent') {
+                        const date = new Date(item.dataset.date);
+                        const now = new Date();
+                        const diffTime = Math.abs(now - date);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        if (diffDays <= 30) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+
+        // Lightbox configuration
+        lightbox.option({
+            'resizeDuration': 200,
+            'wrapAround': true,
+            'albumLabel': 'Imagem %1 de %2'
+        });
+
+        // Lazy loading for images
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src || img.src;
+                        img.classList.remove('loading-skeleton');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+                img.classList.add('loading-skeleton');
+                imageObserver.observe(img);
+            });
+        }
+    </script>
 </body>
 </html>
+

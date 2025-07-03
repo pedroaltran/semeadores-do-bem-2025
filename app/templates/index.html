@@ -812,27 +812,30 @@
         </div>
     </section>
 
+
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
+    <footer class="bg-gray-800 text-white py-12">
         <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-3 gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <h3 class="text-2xl font-bold mb-4">Semeadores do Bem</h3>
-                    <p class="text-gray-300">
-                        Transformando vidas através da solidariedade e do amor ao próximo.
+                    <div class="flex items-center mb-4">
+                        <img src="{{ url_for('static', filename='images/logosemeadores.png') }}" alt="Logo" class="h-12 w-12 mr-3">
+                        <span class="text-xl font-montserrat font-bold">Semeadores do Bem</span>
+                    </div>
+                    <p class="text-gray-400">
+                        Transformando vidas através do amor, cuidado e esperança.
                     </p>
                 </div>
-                
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Links Rápidos</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#sobre" class="text-gray-300 hover:text-primary transition-colors">Sobre Nós</a></li>
-                        <li><a href="#servicos" class="text-gray-300 hover:text-primary transition-colors">Nossos Serviços</a></li>
-                        <li><a href="#transparencia" class="text-gray-300 hover:text-primary transition-colors">Transparência</a></li>
-                        <li><a href="#colaborador" class="text-gray-300 hover:text-primary transition-colors">Como Ajudar</a></li>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#sobre" class="hover:text-white transition-colors">Sobre Nós</a></li>
+                        <li><a href="#servicos" class="hover:text-white transition-colors">Nosso Serviços</a></li>
+                        <li><a href="#transparencia" class="hover:text-white transition-colors">Transparência</a></li>
+                        <li><a href="#colaborador" class="hover:text-white transition-colors">Como Ajudar</a></li>
                     </ul>
                 </div>
-                
+
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Contato</h4>
                     <ul class="space-y-2">
@@ -854,13 +857,15 @@
                     </ul>
                 </div>
             </div>
-            
-            <hr class="border-gray-700 mb-8">
-            
-            <div class="text-center text-gray-400">
+
+            <div class="text-center text-gray-400 mt-12">
                 <p>&copy; 2025 Semeadores do Bem - Todos os direitos reservados</p><br>
-                Desenvolvido por <a href="https://www.linkedin.com/in/pedroaltran/" target="_blank" rel="noopener noreferrer" style="font-weight: bold; color: #00bfff;">Pedro Altran <i class="fas fa-heart" style="color: var(--primary-color);"></i></a> 
+                Desenvolvido por 
+                <a href="https://www.linkedin.com/in/pedroaltran/" target="_blank" rel="noopener noreferrer" style="font-weight: bold; color: #00bfff;">
+                    Pedro Altran <i class="fas fa-heart" style="color: var(--primary-color);"></i>
+                </a> 
             </div>
+
         </div>
     </footer>
 
